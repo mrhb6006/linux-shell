@@ -8,7 +8,6 @@
 
 
 void executeSingleLineCommand(char *command);
-
 void executePipeLineCommand(char *command);
 
 int main() {
@@ -39,7 +38,7 @@ int main() {
 void executeSingleLineCommand(char *command) {
     int spaceCount = getSplitedArrayLength(command, " ");
     char *args[spaceCount];
-    parseCommand(command, reinterpret_cast<char **>(&args), " ");
+    split(command, reinterpret_cast<char **>(&args), " ");
     if ((execvp(args[0], args)) == -1) {
         printf("\ncommand not found");
     }
@@ -48,14 +47,11 @@ void executeSingleLineCommand(char *command) {
 void executePipeLineCommand(char *command) {
     int pipeCommandCount = getSplitedArrayLength(command, "|");
     char *commands[pipeCommandCount];
-    parseCommand(command, reinterpret_cast<char **>(&commands), "|");
+    split(command, reinterpret_cast<char **>(&commands), "|");
     for (int i = 0; i < pipeCommandCount; ++i) {
         trimCommand(commands[i]);
         executeSingleLineCommand(commands[i]);
     }
-//        if ((execvp(commands[i][0], commands[i])) == -1) {
-//            printf("\ncommand not found");
-//        }
     return;
 
 }

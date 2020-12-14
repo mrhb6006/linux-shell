@@ -38,3 +38,12 @@ int getSplitedArrayLength(char *string,char *splitBy) {
 bool contain(char *string,char *subString) {
     return (strstr(string, subString) != NULL);
 }
+
+void split(char* cmd ,char **args,char *splitBy) {
+    int n=0;
+    char *command;
+    while( (command=strsep(&cmd,splitBy)) != NULL ){
+        args[n++]=command;
+    }
+    args[n]=NULL;
+}
