@@ -1,9 +1,14 @@
 //
 // Created by mrhb on 12/11/20.
 //
+
 #ifndef SHELL_READLINE_H
 #define SHELL_READLINE_H
-#endif //SHELL_READLINE_H
+#define SINGLE_LINE_COMMAND 1
+#define PIPE_LINE_COMMAND 2
+#define QUIT 3
+#define UNKNOWN_COMMAND 4
+#endif
 #include <cstring>
 #include "stringUtils.h"
 
@@ -16,35 +21,20 @@ char *readCommand() {
     return line;
 }
 
-void parseCommand(char* cmd ,char **args,char *splitBy) {
-    int n=0;
-    char *command;
-    while( (command=strsep(&cmd,splitBy)) != NULL ){
-        args[n++]=command;
-    }
-    args[n]=NULL;
-}
-
-
-char* trimCommand(char *command){
-    for (int i = 0; command[i] ; ++i) {
-        if (i!=0 && i!=(strlen(command)-1)){
-            if (command[i]==' ' && (command[i-1]==' ' || command[i+1]==' ')){
-                strRemove(command,i);
-                i--;
-            }
-        }else if(i==0){
-            if (command[0]==' '){
-                strRemove(command,0);
-                i--;
-            }
-        }else{
-            if (command[i]==' ' && i==strlen(command)-1){
-                strRemove(command,i);
-            }
+int getCommandType(char *command){
+    if (contain(command,"|")){
+        if (getSplitedArrayLength(command,"|")>2){
+            return UNKNOWN_COMMAND;
         }
+        return PIPE_LINE_COMMAND;
+    }else if (contain(command,"quit")){
+        return QUIT;
+    }else {
+        return SINGLE_LINE_COMMAND;
     }
-    return command;
 }
+
+
+
 
 

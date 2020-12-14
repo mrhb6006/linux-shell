@@ -4,7 +4,7 @@
 
 #ifndef SHELL_STRINGUTILS_H
 #define SHELL_STRINGUTILS_H
-
+#include <cstdio>
 #endif //SHELL_STRINGUTILS_H
 
 char *strRemove(char *str, const char *sub) {
@@ -46,4 +46,25 @@ void split(char* cmd ,char **args,char *splitBy) {
         args[n++]=command;
     }
     args[n]=NULL;
+}
+
+char* trim(char *command){
+    for (int i = 0; command[i] ; ++i) {
+        if (i!=0 && i!=(strlen(command)-1)){
+            if (command[i]==' ' && (command[i-1]==' ' || command[i+1]==' ')){
+                strRemove(command,i);
+                i--;
+            }
+        }else if(i==0){
+            if (command[0]==' '){
+                strRemove(command,0);
+                i--;
+            }
+        }else{
+            if (command[i]==' ' && i==strlen(command)-1){
+                strRemove(command,i);
+            }
+        }
+    }
+    return command;
 }
