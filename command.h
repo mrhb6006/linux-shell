@@ -16,10 +16,10 @@ char *readCommand() {
     return line;
 }
 
-void parseCommand(char* cmd ,char **args) {
+void parseCommand(char* cmd ,char **args,char *splitBy) {
     int n=0;
     char *command;
-    while( (command=strsep(&cmd," ")) != NULL ){
+    while( (command=strsep(&cmd,splitBy)) != NULL ){
         args[n++]=command;
     }
     args[n]=NULL;

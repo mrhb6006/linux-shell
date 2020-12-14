@@ -19,20 +19,22 @@ char *strRemove(char *str, const char *sub) {
 }
 
 char *strRemove(char *str, const int index) {
-    memmove(str+index, str+index+1 , strlen(str)-index);
+    memmove(str + index, str + index + 1, strlen(str) - index);
     return str;
 }
 
-int getSplitedArrayLength(char* string)
-{
+int getSplitedArrayLength(char *string,char *splitBy) {
     int n = 0;
-    char *copy=(char*)malloc(strlen(string) * sizeof(char));
+    char *copy = (char *) malloc(strlen(string) * sizeof(char));
     strcpy(copy, string);
-    char* temp = strtok(copy, " ");
-    while (temp != NULL){
-        temp = strtok(NULL, " ");
+    char *temp = strtok(copy, splitBy);
+    while (temp != NULL) {
+        temp = strtok(NULL, splitBy);
         n++;
     }
     return n;
 }
 
+bool contain(char *string,char *subString) {
+    return (strstr(string, subString) != NULL);
+}

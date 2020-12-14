@@ -7,7 +7,9 @@
 #include "command.h"
 
 
-void executeCommand(char *command);
+void executeSingleLineCommand(char *command);
+
+void executePipeLineCommand(char *command);
 
 int main() {
     char *command;
@@ -15,31 +17,47 @@ int main() {
     while (true) {
         command = readCommand();
         trimCommand(command);
-        if (strlen(command)==0){
+        if (strlen(command) == 0) {
             continue;
         }
-        pid = fork();
+         pid = fork();
         if (pid == 0) {
-            executeCommand(command);
-        } else if(pid>0){
+            // executeSingleLineCommand(command);
+            executePipeLineCommand(command);
+        } else if (pid > 0) {
             int status;
             do {
                 waitpid(pid, &status, WUNTRACED);
             } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-        }else{
+        } else {
             printf("\nerror in fork process");
             break;
         }
     }
 }
 
-void executeCommand(char *command) {
-    int spaceCount = getSplitedArrayLength(command);
+void executeSingleLineCommand(char *command) {
+    int spaceCount = getSplitedArrayLength(command, " ");
     char *args[spaceCount];
-    parseCommand(command, reinterpret_cast<char **>(&args));
+    parseCommand(command, reinterpret_cast<char **>(&args), " ");
     if ((execvp(args[0], args)) == -1) {
         printf("\ncommand not found");
     }
+}
+
+void executePipeLineCommand(char *command) {
+    int pipeCommandCount = getSplitedArrayLength(command, "|");
+    char *commands[pipeCommandCount];
+    parseCommand(command, reinterpret_cast<char **>(&commands), "|");
+    for (int i = 0; i < pipeCommandCount; ++i) {
+        trimCommand(commands[i]);
+        executeSingleLineCommand(commands[i]);
+    }
+//        if ((execvp(commands[i][0], commands[i])) == -1) {
+//            printf("\ncommand not found");
+//        }
+    return;
+
 }
 
 
