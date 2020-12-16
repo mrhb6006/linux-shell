@@ -48,6 +48,18 @@ void split(char* cmd ,char **args,char *splitBy) {
     args[n]=NULL;
 }
 
+int countOfSubSting(char *string,char *useCase) {
+    int n = 0;
+    char *copy = (char *) malloc(strlen(string) * sizeof(char));
+    strcpy(copy, string);
+    for (int i = 0; copy[i] ; ++i) {
+        if (copy[i]==*useCase){
+            n++;
+        }
+    }
+    return n;
+}
+
 char* trim(char *command){
     for (int i = 0; command[i] ; ++i) {
         if (i!=0 && i!=(strlen(command)-1)){

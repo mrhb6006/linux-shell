@@ -23,7 +23,7 @@ char *readCommand() {
 
 int getCommandType(char *command){
     if (contain(command,"|")){
-        if (getSplitedArrayLength(command,"|")>2){
+        if (countOfSubSting(command,"|")!=1){
             return UNKNOWN_COMMAND;
         }
         return PIPE_LINE_COMMAND;

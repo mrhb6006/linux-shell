@@ -8,7 +8,6 @@ int main() {
     char *command;
     while (true) {
       if(!isExecutingCommand){
-           fflush(stdout);
            command = readCommand();
            trim(command);
            if (strlen(command) == 0) {
@@ -19,11 +18,10 @@ int main() {
                    printf("command not found or not supported");
                }else{
                    printf("GOOD BYE !!");
-                   break;
+                   exit(0);
                }
           }
        }
-
     }
 }
 
