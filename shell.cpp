@@ -2,6 +2,7 @@
 
 
 int main(int argc, char **argv) {
+    initKeyHandler();
 
     if (argc==2){
         executeBatchFile(argv[1]);

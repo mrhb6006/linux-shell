@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <cstdio>
 #include "command.h"
+#include "keyHandler.h"
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -88,7 +89,6 @@ bool executePipeLineCommand(char *command) {
 
     pid1=fork();
     if(0 == pid1){
-
         close(pipefd[1]);
         dup2(pipefd[0],STDIN_FILENO);
         trim(commands[1]);
@@ -153,7 +153,7 @@ void executeBatchFile(char *fileName){
         if (strcmp(line,"\n")==0){
             continue;
         }
-        printf("\nmrhb_shell>>%s",line);
+        printf("\n > %s",line);
         lunch(line);
         usleep(15000);
     }

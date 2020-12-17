@@ -16,8 +16,12 @@ char *readCommand() {
     printf("\nmrhb_shell>>");
     char *line = NULL;
     ssize_t bufSize = 0;
-    getline(&line, reinterpret_cast<size_t *>(&bufSize), stdin);
+    if (getline(&line, reinterpret_cast<size_t *>(&bufSize), stdin)==-1){
+        printf("\nGOOD BYE !!\n");
+        exit(0);
+    }
     line = strRemove(line, reinterpret_cast<const char *>("\n"));
+
     return line;
 }
 
