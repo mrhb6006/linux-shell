@@ -18,7 +18,7 @@ extern bool finishedProgram = false;
 extern bool isExecutingCommand = false;
 
 
-#endif //SHELL_EXECUTE_H
+#endif
 
 bool executeSingleLineCommand(char *command);
 
@@ -27,7 +27,7 @@ bool executePipeLineCommand(char *command);
 bool execute(char *command);
 
 bool execute(char *command) {
-    bool result = false;
+    bool result ;
     int type = getCommandType(command);
     switch (type) {
         case SINGLE_LINE_COMMAND:
@@ -37,7 +37,7 @@ bool execute(char *command) {
             result = executePipeLineCommand(command);
             break;
         case QUIT :
-            finishedProgram = true;
+           finishedProgram = true;
         default:
             result = false;
     }
@@ -50,19 +50,18 @@ bool executeSingleLineCommand(char *command) {
     pid = fork();
     if (pid == 0) {
         trim(command);
+        strRemove(command,"\n");
         int spaceCount = getSplitedArrayLength(command, " ");
         char *args[spaceCount];
         split(command, reinterpret_cast<char **>(&args), " ");
         if ((execvp(args[0], args)) == -1) {
             usleep(6000);
             isExecutingCommand= false;
-            return false;
+            printf("command %s not found",args[0]);
+            _exit(0);
         }
     } else if (pid > 0) {
-        int status;
-        do {
-            waitpid(pid, &status, WUNTRACED);
-        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+        wait(0);
         usleep(6000);
         isExecutingCommand= false;
         return true;
@@ -77,65 +76,19 @@ bool executePipeLineCommand(char *command) {
 
     isExecutingCommand= true;
     strRemove(command,"\"");
+    strRemove(command,"\n");
     char *commands[2];
+    int pipefd[2];
+    int pid1=1,pid2=1;
+
     trim(command);
     split(command,commands,"|");
 
-//    int pipefd[2];
-//    if(pipe(pipefd) == -1) {
-//        perror("Pipe creation failed");
-//        exit(1);
-//    }
-//
-//    if(fork() == 0)
-//    {
-//        close(STDOUT_FILENO);
-//        dup(pipefd[1]);
-//        close(pipefd[0]);
-//        close(pipefd[1]);
-//
-//        trim(commands[0]);
-//        int spaceCount = getSplitedArrayLength(commands[0], " ");
-//        char *args[spaceCount];
-//        split(commands[0], reinterpret_cast<char **>(&args), " ");
-//        if(execvp(args[0], (args))==-1){
-//           printf("command %s not found",args[0]);
-//           exit(0);
-//        }
-//    }
-//
-//
-//    if(fork() == 0)
-//    {
-//        close(STDIN_FILENO);
-//        dup(pipefd[0]);
-//        close(pipefd[1]);
-//        close(pipefd[0]);
-//
-//        trim(commands[1]);
-//        int spaceCount = getSplitedArrayLength(commands[1], " ");
-//        char *args[spaceCount];
-//        split(commands[1], reinterpret_cast<char **>(&args), " ");
-//        if(execvp(args[0], (args))==-1){
-//            printf("command %s not found",args[0]);
-//            exit(0);
-//        }
-//    }
-//
-//    close(pipefd[0]);
-//    close(pipefd[1]);
-//    wait(0);
-//    wait(0);
-//    usleep(10000);
-//    isExecutingCommand= false;
-//    return true;
-
-    int pipefd[2];
-    int pid1=1,pid2=1;
     pipe(pipefd);
+
     pid1=fork();
     if(0 == pid1){
-        //parent
+
         close(pipefd[1]);
         dup2(pipefd[0],STDIN_FILENO);
         trim(commands[1]);
@@ -144,7 +97,7 @@ bool executePipeLineCommand(char *command) {
         split(commands[1], reinterpret_cast<char **>(&args), " ");
         if ((execvp(args[0], args)) == -1) {
             printf("command %s not found",args[0]);
-            exit(0);
+            _exit(0);
         }
     }else{
         pid2 = fork() ;
@@ -157,13 +110,9 @@ bool executePipeLineCommand(char *command) {
             split((commands[0]), reinterpret_cast<char **>(&args), " ");
             if ((execvp(args[0], args)) == -1) {
                 printf("command %s not found",args[0]);
-                exit(0);
+                _exit(0);
             }
         }else{
-//            int status1;
-//            do {
-//                waitpid(pid2, &status1, WUNTRACED);
-//            } while ((!WIFEXITED(status1) && !WIFSIGNALED(status1)));
             usleep(8000);
             close(pipefd[0]);
             close(pipefd[1]);
@@ -172,5 +121,45 @@ bool executePipeLineCommand(char *command) {
             isExecutingCommand= false;
             return true;
         }
+    }
+}
+
+bool lunch(char *command){
+    trim(command);
+    if (strlen(command) == 0) {
+        return true;
+    }
+    if (!execute(command)){
+        if (!finishedProgram){
+            printf("command not found or not supported");
+        }else{
+            printf("GOOD BYE !! \n");
+            exit(0);
+        }
+    }
+    return true;
+}
+
+void executeBatchFile(char *fileName){
+    FILE * batchFile;
+    char * line = nullptr;
+    size_t len = 0;
+    batchFile = fopen(fileName, "r");
+    if (batchFile == nullptr) {
+        fprintf(stderr," \n file not found \n ");
+        return;
+    }
+    while ((getline(&line, &len, batchFile)) != -1 && !finishedProgram) {
+        if (strcmp(line,"\n")==0){
+            continue;
+        }
+        printf("\nmrhb_shell>>%s",line);
+        lunch(line);
+        usleep(15000);
+    }
+
+    fclose(batchFile);
+    if (line) {
+        free(line);
     }
 }

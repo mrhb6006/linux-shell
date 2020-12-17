@@ -1,26 +1,17 @@
-#include <readline/readline.h>
-#include <cstdio>
 #include "execute.h"
 
 
+int main(int argc, char **argv) {
 
-int main() {
+    if (argc==2){
+        executeBatchFile(argv[1]);
+    }
+
     char *command;
-    while (true) {
+    while (!finishedProgram) {
       if(!isExecutingCommand){
            command = readCommand();
-           trim(command);
-           if (strlen(command) == 0) {
-               continue;
-           }
-           if (!execute(command)){
-               if (!finishedProgram){
-                   printf("command not found or not supported");
-               }else{
-                   printf("GOOD BYE !!");
-                   exit(0);
-               }
-          }
+           lunch(command);
        }
     }
 }
