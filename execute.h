@@ -4,19 +4,18 @@
 
 #ifndef SHELL_EXECUTE_H
 #define SHELL_EXECUTE_H
-
+extern bool finishedProgram = false;
+extern bool isExecutingCommand = false;
+extern bool newMassage = true;
 #include <cstdlib>
 #include <wait.h>
 #include <unistd.h>
-#include <cstdio>
 #include "command.h"
+#include <cstdio>
 #include "keyHandler.h"
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include "massaging.h"
 
-extern bool finishedProgram = false;
-extern bool isExecutingCommand = false;
+
 
 
 #endif
@@ -36,6 +35,10 @@ bool execute(char *command) {
             break;
         case PIPE_LINE_COMMAND:
             result = executePipeLineCommand(command);
+            break;
+        case SEND_MSG:
+            sendMassage(command);
+            result= true;
             break;
         case QUIT :
            finishedProgram = true;
@@ -57,9 +60,10 @@ bool executeSingleLineCommand(char *command) {
         split(command, reinterpret_cast<char **>(&args), " ");
         if ((execvp(args[0], args)) == -1) {
             usleep(6000);
-            isExecutingCommand= false;
             printf("command %s not found",args[0]);
-            _exit(0);
+            usleep(5000);
+            isExecutingCommand= false;
+            exit(0);
         }
     } else if (pid > 0) {
         wait(0);
@@ -96,8 +100,8 @@ bool executePipeLineCommand(char *command) {
         char *args[spaceCount];
         split(commands[1], reinterpret_cast<char **>(&args), " ");
         if ((execvp(args[0], args)) == -1) {
-            printf("command %s not found",args[0]);
-            _exit(0);
+            printf("command not found or not supported");
+            exit(0);
         }
     }else{
         pid2 = fork() ;
@@ -109,8 +113,8 @@ bool executePipeLineCommand(char *command) {
             char *args[spaceCount];
             split((commands[0]), reinterpret_cast<char **>(&args), " ");
             if ((execvp(args[0], args)) == -1) {
-                printf("command %s not found",args[0]);
-                _exit(0);
+                printf("command not found or not supported");
+                exit(0);
             }
         }else{
             usleep(8000);

@@ -48,10 +48,10 @@
 #include <termios.h>
 #include <signal.h>
 
-void CTRL_D_handler(int sig){
+void CTRL_C_handler(int sig){
     printf("\n");
 }
 
 int initKeyHandler(){
-    signal(SIGINT,CTRL_D_handler);
+    signal(SIGINT,CTRL_C_handler);
 }

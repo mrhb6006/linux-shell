@@ -8,6 +8,7 @@
 #define PIPE_LINE_COMMAND 2
 #define QUIT 3
 #define UNKNOWN_COMMAND 4
+#define SEND_MSG 5
 #endif
 #include <cstring>
 #include "stringUtils.h"
@@ -26,7 +27,9 @@ char *readCommand() {
 }
 
 int getCommandType(char *command){
-    if (contain(command,"|")){
+    if (contain(command,"msg")){
+        return SEND_MSG;
+    }else if (contain(command,"|")){
         if (countOfSubSting(command,"|")!=1){
             return UNKNOWN_COMMAND;
         }
