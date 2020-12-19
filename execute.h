@@ -87,7 +87,7 @@ void showHistorty() {
     isExecutingCommand= true;
     printf("command history : \n");
     for (int i = 0; i< countOfHistoryCommand; i++) {
-        printf("%s \n",history[i]);
+        printf("-%d %s \n",i+1,history[i]);
     }
     isExecutingCommand= false;
 }
@@ -202,7 +202,7 @@ void executeBatchFile(char *fileName){
         if (strcmp(line,"\n")==0){
             continue;
         }
-        printf("\n > %s",line);
+        printf("\n>>> %s",line);
         lunch(line);
         usleep(15000);
     }

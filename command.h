@@ -10,7 +10,7 @@
 #define UNKNOWN_COMMAND 4
 #define SEND_MSG 5
 #define HISTORY 6
-#define CD 8
+#define CD 7
 #endif
 #include <cstring>
 #include "stringUtils.h"
@@ -19,7 +19,7 @@ void printDir()
 {
     char cwd[1024];
     getcwd(cwd, sizeof(cwd));
-    printf("\nDire: %s", cwd);
+    printf("\n\nDire: %s", cwd);
 }
 
 char *readCommand() {
