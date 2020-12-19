@@ -10,6 +10,7 @@
 #define UNKNOWN_COMMAND 4
 #define SEND_MSG 5
 #define HISTORY 6
+#define CD 8
 #endif
 #include <cstring>
 #include "stringUtils.h"
@@ -38,7 +39,9 @@ char *readCommand() {
 
 
 int getCommandType(char *command){
-    if (contain(command,"history")){
+    if (contain(command,"cd")){
+        return CD;
+    } else if (contain(command,"history")){
         return HISTORY;
     }else if (contain(command,"msg")){
         return SEND_MSG;

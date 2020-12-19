@@ -6,7 +6,6 @@
 #define SHELL_EXECUTE_H
 extern bool finishedProgram = false;
 extern bool isExecutingCommand = false;
-extern bool newMassage = true;
 char history[400][500];
 int countOfHistoryCommand=0;
 #include <cstdlib>
@@ -23,12 +22,10 @@ int countOfHistoryCommand=0;
 #endif
 
 bool executeSingleLineCommand(char *command);
-
 bool executePipeLineCommand(char *command);
-
 bool execute(char *command);
-
 void showHistorty();
+void changeDir(char *command);
 
 bool execute(char *command) {
     bool result ;
@@ -52,12 +49,38 @@ bool execute(char *command) {
             showHistorty();
             result= true;
             break;
+        case CD:
+            changeDir(command);
+            result= true;
+            break;
         case QUIT :
            finishedProgram = true;
         default:
             result = false;
     }
     return result;
+}
+
+void changeDir(char *command){
+    isExecutingCommand= true;
+    trim(command);
+
+    char last[1024];
+    getcwd(last, sizeof(last));
+
+    strRemove(command,"\n");
+    int spaceCount = getSplitedArrayLength(command, " ");
+    char *args[spaceCount];
+    split(command, reinterpret_cast<char **>(&args), " ");
+    chdir(args[1]);
+
+    char cur[1024];
+    getcwd(cur, sizeof(cur));
+    if (strcmp(cur,last)==0){
+        printf("directory not changed (same dir or invalid dir)\n");
+    }
+    isExecutingCommand= false;
+
 }
 
 void showHistorty() {
