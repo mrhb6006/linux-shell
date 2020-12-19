@@ -7,6 +7,8 @@
 extern bool finishedProgram = false;
 extern bool isExecutingCommand = false;
 extern bool newMassage = true;
+char history[400][500];
+int countOfHistoryCommand=0;
 #include <cstdlib>
 #include <wait.h>
 #include <unistd.h>
@@ -26,8 +28,12 @@ bool executePipeLineCommand(char *command);
 
 bool execute(char *command);
 
+void showHistorty();
+
 bool execute(char *command) {
     bool result ;
+    strcpy( history[countOfHistoryCommand],command);
+    countOfHistoryCommand++;
     int type = getCommandType(command);
     switch (type) {
         case SINGLE_LINE_COMMAND:
@@ -42,12 +48,25 @@ bool execute(char *command) {
             isExecutingCommand= false;
             result= true;
             break;
+        case HISTORY:
+            showHistorty();
+            result= true;
+            break;
         case QUIT :
            finishedProgram = true;
         default:
             result = false;
     }
     return result;
+}
+
+void showHistorty() {
+    isExecutingCommand= true;
+    printf("command history : \n");
+    for (int i = 0; i< countOfHistoryCommand; i++) {
+        printf("%s \n",history[i]);
+    }
+    isExecutingCommand= false;
 }
 
 bool executeSingleLineCommand(char *command) {
