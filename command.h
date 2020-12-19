@@ -14,7 +14,16 @@
 #include <cstring>
 #include "stringUtils.h"
 
+void printDir()
+{
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+    printf("\nDire: %s", cwd);
+}
+
 char *readCommand() {
+
+    printDir();
     printf("\nmrhb_shell>>");
     char *line = NULL;
     ssize_t bufSize = 0;
@@ -26,6 +35,7 @@ char *readCommand() {
 
     return line;
 }
+
 
 int getCommandType(char *command){
     if (contain(command,"history")){
