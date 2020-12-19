@@ -41,7 +41,29 @@ int getCommandType(char *command){
     }
 }
 
-
+char *getShellNumber(){
+    printf("\nif you are first shell enter (1) if not first enter (2)");
+    char* shellNumber="3";
+    printf("\nenter shell number : ");
+    ssize_t bufSize = 0;
+    if (getline(&shellNumber, reinterpret_cast<size_t *>(&bufSize), stdin)==-1){
+        printf("\nGOOD BYE !!\n");
+        exit(0);
+    }
+    shellNumber = strRemove(shellNumber, reinterpret_cast<const char *>("\n"));
+    while (strcmp(shellNumber,"1")!=0 && strcmp(shellNumber,"2")!=0){
+        printf("\ninvalid shell number\n");
+        printf("if you are first shell enter (1) if not first enter (2)");
+        printf("\nenter valid shell number again : ");
+        ssize_t bufSize = 0;
+        if (getline(&shellNumber, reinterpret_cast<size_t *>(&bufSize), stdin)==-1){
+            printf("\nGOOD BYE !!\n");
+            exit(0);
+        }
+        shellNumber = strRemove(shellNumber, reinterpret_cast<const char *>("\n"));
+    }
+    return shellNumber;
+}
 
 
 

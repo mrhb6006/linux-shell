@@ -38,6 +38,8 @@ bool execute(char *command) {
             break;
         case SEND_MSG:
             sendMassage(command);
+            usleep(10000);
+            isExecutingCommand= false;
             result= true;
             break;
         case QUIT :
@@ -133,6 +135,7 @@ bool lunch(char *command){
     if (strlen(command) == 0) {
         return true;
     }
+
     if (!execute(command)){
         if (!finishedProgram){
             printf("command not found or not supported");

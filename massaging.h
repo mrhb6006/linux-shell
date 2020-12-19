@@ -8,55 +8,128 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-
 #ifndef SHELL_MASSAGING_H
 #define SHELL_MASSAGING_H
 
 #endif //SHELL_MASSAGING_H
-
-void* readMessage(void* arg)
-{
-        int fd1;
-        char * myfifo = "./myfifo";
-
-        mkfifo(myfifo, 0666);
-        char str1[80];
-        while (!finishedProgram)
+pthread_t ptid;
+char *shellNumber;
+void *readMessage(void *arg) {
+//    if (strcmp(shellNumber,"1")==0){
+//        int fd;
+//        char* myfifo = "./pipe/myfifo1";
+//        char massage[512];
+//        while(!finishedProgram)
+//        {
+//            sleep(1);
+//            fd = open(myfifo, O_RDONLY);
+//            if (read(fd, massage, 512) != -1){
+//                printf("\nnew massage: %s\n", massage);
+//                printf("mrhb_shell>>");
+//            }
+//            close(fd);
+//        }
+//        exit(0);
+//
+//    } else{
+//        int fd;
+//        char* myfifo = "./pipe/myfifo2";
+//        char massage[512];
+//        while(!finishedProgram)
+//        {
+//            sleep(1);
+//            fd = open(myfifo, O_RDONLY);
+//            if (read(fd, massage, 512) != -1){
+//                printf("\nnew massage: %s\n", massage);
+//            }
+//            close(fd);
+//        }
+//        exit(0);
+//    }
+    if (strcmp("1",shellNumber)==0){
+        int fd;
+        char * myfifo = "./myfifo2";
+        char massage[512],prev[512];
+        while(!finishedProgram)
         {
-            // First open in read only and read
-            if (newMassage){
-
-            fd1 = open(myfifo,O_RDONLY);
-            read(fd1, str1, 80);
-
-            // Print the read string and close
-            while (isExecutingCommand);
-            printf("\nnew massage : %s \n", str1);
-            close(fd1);
+            sleep(1);
+            fd = open(myfifo, O_RDONLY);
+         //   int t=read(fd, massage, 512);
+            if (read(fd, massage, 512)!=-1){
+                printf("\nnew massage: %s\n", massage);
+                printf("mrhb_shell>>");
             }
+            close(fd);
         }
-       exit(0);
+        exit(0);
+
+    } else{
+        int fd;
+        char * myfifo = "./myfifo1";
+        char massage[512];
+
+        while(!finishedProgram)
+        {
+            sleep(1);
+            fd = open(myfifo, O_RDONLY);
+           // int t=read(fd, massage, 512);
+            if (read(fd, massage, 512)!=-1){
+                printf("\nnew massage: %s\n", massage);
+                printf("mrhb_shell>>");
+            }
+            close(fd);
+        }
+        exit(0);
+    }
 }
 
-void sendMassage(char *msg){
-    int fd;
 
-    // FIFO file path
-    char * myfifo = "./myfifo";
-
+void sendMassage(char *msg) {
+//    if (strcmp(shellNumber,"1")==0){
+//        int fd;
+//        char * myfifo = "./pipe/myfifo2";
+//        mkfifo(myfifo, 0666);
+//        fd = open(myfifo, O_WRONLY);
+//        strRemove(msg,0);
+//        strRemove(msg,1);
+//        strRemove(msg,2);
+//        int n = write(fd, msg, strlen(msg));
+//        close(fd);
+//        unlink(myfifo);
+//    }else{
+//        int fd;
+//        char * myfifo = "./pipe/myfifo1";
+//        mkfifo(myfifo, 0666);
+//        fd = open(myfifo, O_WRONLY);
+//        strRemove(msg,0);
+//        strRemove(msg,1);
+//        strRemove(msg,2);
+//        write(fd, msg, strlen(msg));
+//        close(fd);
+//        unlink(myfifo);
+//    }
+    if (strcmp("1",shellNumber)==0){
+        int fd;
+        char * myfifo = "./myfifo1";
         mkfifo(myfifo, 0666);
-
         fd = open(myfifo, O_WRONLY);
+        strRemove(msg,"msg");
         write(fd, msg, strlen(msg)+1);
         close(fd);
-}
-pthread_t ptid;
+        unlink(myfifo);
+    }else{
+        int fd;
+        char * myfifo = "./myfifo2";
+        mkfifo(myfifo, 0666);
+        fd = open(myfifo, O_WRONLY);
+        strRemove(msg,"msg");
+        write(fd, msg, strlen(msg)+1);
+        close(fd);
+        unlink(myfifo);
+    }
 
-void createThread()
-{
+}
+
+void createThread() {
     pthread_create(&ptid, NULL, &readMessage, NULL);
-}
-
-void sleep(){
-
 }
